@@ -5,6 +5,7 @@ import '../models/message.dart';
 class ApiService {
   static const String baseUrl = 'http://localhost:8080';
   static const Duration timeout = Duration(seconds: 30);
+
   late http.Client _client;
 
   ApiService() {
@@ -14,6 +15,7 @@ class ApiService {
   void dispose() {
     _client.close();
   }
+
 
   Map<String, String> _getHeaders() => {
         'Content-Type': 'application/json',
