@@ -1,11 +1,11 @@
 package models
 
+// Message represents a chat message
 import (
 	"errors"
 	"time"
 )
 
-// Message represents a chat message
 type Message struct {
 	// TODO: Add ID field of type int with json tag "id"
 	// TODO: Add Username field of type string with json tag "username"
@@ -21,14 +21,14 @@ type Message struct {
 type CreateMessageRequest struct {
 	// TODO: Add Username field of type string with json tag "username" and validation tag "required"
 	// TODO: Add Content field of type string with json tag "content" and validation tag "required"
-	Username string `json:"username"`
-	Content  string `json:"content"`
+	Username string `json:"username" validate:"required"`
+	Content  string `json:"content" validate:"required"`
 }
 
 // UpdateMessageRequest represents the request to update a message
 type UpdateMessageRequest struct {
 	// TODO: Add Content field of type string with json tag "content" and validation tag "required"
-	Content string `json:"content"`
+	Content string `json:"content" validate:"required"`
 }
 
 // HTTPStatusResponse represents the response for HTTP status code endpoint
@@ -53,13 +53,13 @@ type APIResponse struct {
 
 // NewMessage creates a new message with the current timestamp
 func NewMessage(id int, username, content string) *Message {
-	// TODO: Return a new Message instance with provided parameters and current timestamp
-	return &Message{
+	newMessage := Message{
 		ID:        id,
 		Username:  username,
 		Content:   content,
 		Timestamp: time.Now(),
 	}
+	return &newMessage
 }
 
 // Validate checks if the create message request is valid
@@ -69,10 +69,10 @@ func (r *CreateMessageRequest) Validate() error {
 	// Check if Content is not empty
 	// Return appropriate error messages
 	if r.Username == "" {
-		return errors.New("username is required")
+		return errors.New("username cannot be empty")
 	}
 	if r.Content == "" {
-		return errors.New("content is required")
+		return errors.New("content cannot be empty")
 	}
 	return nil
 }
@@ -83,7 +83,7 @@ func (r *UpdateMessageRequest) Validate() error {
 	// Check if Content is not empty
 	// Return appropriate error messages
 	if r.Content == "" {
-		return errors.New("content is required")
+		return errors.New("content cannot be empty")
 	}
 	return nil
 }

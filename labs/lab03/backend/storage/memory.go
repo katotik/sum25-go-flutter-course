@@ -1,10 +1,9 @@
 package storage
 
 import (
-	"sync"
-
 	"errors"
 	"lab03-backend/models"
+	"sync"
 )
 
 // MemoryStorage implements in-memory storage for messages
@@ -37,11 +36,11 @@ func (ms *MemoryStorage) GetAll() []*models.Message {
 	ms.mutex.RLock()
 	defer ms.mutex.RUnlock()
 
-	result := make([]*models.Message, 0, len(ms.messages))
+	messages := make([]*models.Message, 0, len(ms.messages))
 	for _, msg := range ms.messages {
-		result = append(result, msg)
+		messages = append(messages, msg)
 	}
-	return result
+	return messages
 }
 
 // GetByID returns a message by its ID
@@ -52,6 +51,10 @@ func (ms *MemoryStorage) GetByID(id int) (*models.Message, error) {
 	// Return message or error if not found
 	ms.mutex.RLock()
 	defer ms.mutex.RUnlock()
+
+	if id < 1 {
+		return nil, ErrInvalidID
+	}
 
 	msg, exists := ms.messages[id]
 	if !exists {
@@ -75,6 +78,7 @@ func (ms *MemoryStorage) Create(username, content string) (*models.Message, erro
 	msg := models.NewMessage(ms.nextID, username, content)
 	ms.messages[ms.nextID] = msg
 	ms.nextID++
+
 	return msg, nil
 }
 
@@ -87,6 +91,10 @@ func (ms *MemoryStorage) Update(id int, content string) (*models.Message, error)
 	// Return updated message or error if not found
 	ms.mutex.Lock()
 	defer ms.mutex.Unlock()
+
+	if id < 1 {
+		return nil, ErrInvalidID
+	}
 
 	msg, exists := ms.messages[id]
 	if !exists {
@@ -107,11 +115,16 @@ func (ms *MemoryStorage) Delete(id int) error {
 	ms.mutex.Lock()
 	defer ms.mutex.Unlock()
 
-	_, exists := ms.messages[id]
-	if !exists {
+	if id < 1 {
+		return ErrInvalidID
+	}
+
+	if _, exist := ms.messages[id]; !exist {
 		return ErrMessageNotFound
 	}
+
 	delete(ms.messages, id)
+
 	return nil
 }
 
@@ -120,12 +133,13 @@ func (ms *MemoryStorage) Count() int {
 	// TODO: Implement Count method
 	// Use read lock for thread safety
 	// Return length of messages map
-	ms.mutex.RLock()
-	defer ms.mutex.RUnlock()
-	return len(ms.messages)
+	ms.mutex.Lock()
+	defer ms.mutex.Unlock()
+
+	count := len(ms.messages)
+	return count
 }
 
-// Common errors
 var (
 	ErrMessageNotFound = errors.New("message not found")
 	ErrInvalidID       = errors.New("invalid message ID")
