@@ -48,6 +48,10 @@ class MyApp extends StatelessWidget {
 
 // TODO: Create Provider class for managing app state
 class ChatProvider extends ChangeNotifier {
+  // TODO: Add final ApiService _apiService;
+  // TODO: Add List<Message> _messages = [];
+  // TODO: Add bool _isLoading = false;
+  // TODO: Add String? _error;
   final ApiService _apiService;
   List<Message> _messages = [];
   bool _isLoading = false;
@@ -56,7 +60,6 @@ class ChatProvider extends ChangeNotifier {
   List<Message> get messages => _messages;
   bool get isLoading => _isLoading;
   String? get error => _error;
-  
   Future<void> loadMessages() async {
     _isLoading = true;
     _error = null;

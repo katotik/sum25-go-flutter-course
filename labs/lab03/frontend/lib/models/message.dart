@@ -3,7 +3,7 @@ class Message {
   final String username;
   final String content;
   final DateTime timestamp;
-
+  
   Message(
       {required this.id,
       required this.username,
@@ -19,14 +19,15 @@ class Message {
     );
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'username': username,
-      'content': content,
-      'timestamp': timestamp.toIso8601String(),
-    };
-  }
+  // TODO: Add toJson() method that returns Map<String, dynamic>
+  // Return map with 'id', 'username', 'content', and 'timestamp' keys
+  // Convert timestamp to ISO string using toIso8601String()
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'username': username,
+        'content': content,
+        'timestamp': timestamp.toIso8601String(),
+      };
 }
 
 class CreateMessageRequest {

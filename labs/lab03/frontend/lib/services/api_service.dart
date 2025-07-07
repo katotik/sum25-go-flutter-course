@@ -17,7 +17,7 @@ class ApiService {
 
   // TODO: Add dispose() method that calls _client.close();
   void dispose() {
-    _client.close();
+    client.close();
   }
 
   // TODO: Add _getHeaders() method that returns Map<String, String>
@@ -344,7 +344,6 @@ class ApiService {
 class ApiException implements Exception {
   final String message;
   ApiException(this.message);
-
   @override
   String toString() => 'ApiException: $message';
 }

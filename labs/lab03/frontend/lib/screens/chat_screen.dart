@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/message.dart';
@@ -36,7 +37,59 @@ class _ChatScreenState extends State<ChatScreen> {
     // TODO: Dispose controllers and API service
     _usernameController.dispose();
     _messageController.dispose();
+    _apiService.dispose();
     super.dispose();
+  }
+
+  Widget _buildMessageTile(Message message) {
+    return ListTile(
+      leading: CircleAvatar(child: Text(message.username[0].toUpperCase())),
+      title: Text("${message.username} • ${message.timestamp.toLocal().toIso8601String()}"),
+      subtitle: Text(message.content),
+      trailing: PopupMenuButton<String>(
+        onSelected: (value) {
+          if (value == 'edit') _editMessage(message);
+          if (value == 'delete') _deleteMessage(message);
+        },
+        itemBuilder: (context) => [
+          const PopupMenuItem(value: 'edit', child: Text('Edit')),
+          const PopupMenuItem(value: 'delete', child: Text('Delete')),
+        ],
+      ),
+      onTap: () {
+        final statusCodes = [200, 404, 500];
+        _showHTTPStatus(statusCodes[Random().nextInt(statusCodes.length)]);
+      },
+    );
+  }
+
+  Widget _buildLoadingWidget() {
+    return const Center(child: CircularProgressIndicator());
+  }
+
+  Widget _buildErrorWidget() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.error, color: Colors.red, size: 48),
+          Text(_error ?? 'Unknown error', style: const TextStyle(color: Colors.red)),
+          const SizedBox(height: 10),
+          ElevatedButton(onPressed: _loadMessages, child: const Text("Retry"))
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('REST API Chat'),
+        actions: [IconButton(icon: const Icon(Icons.refresh), onPressed: _loadMessages)],
+      ),
+      body: const Center(child: Text('TODO: Implement chat functionality')),
+    );
   }
 
   Future<void> _loadMessages() async {
